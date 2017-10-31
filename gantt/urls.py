@@ -16,11 +16,12 @@ Including another URLconf
 
 from django.conf.urls import url
 from django.contrib import admin
-from controll import views as controll_views
+from controll import views as control_views
 from django.conf import settings
 import os
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', controll_views.index, name="index"),
-    url()
+    url(r'^/projects/(?P<project_name>[^/]+)/$', control_views.show_projects, name="projects")
+    url(r'^/add_project/$', control_views.add_project, 'add_project'),
 ]
