@@ -21,7 +21,7 @@ from django.conf import settings
 import os
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^$', controll_views.index, name="index"),
-    url(r'^/projects/(?P<project_name>[^/]+)/$', control_views.show_projects, name="projects")
-    url(r'^/add_project/$', control_views.add_project, 'add_project'),
+    url(r'^$', control_views.index, name="index"),
+    url(r'^projects/(?P<project_name>[^/]+)/$', control_views.show_projects, name="projects"),
+    url(r'^add_project/$', control_views.add_project, name='add_project'),
 ]

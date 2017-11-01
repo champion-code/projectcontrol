@@ -1,10 +1,15 @@
+# -*- coding:utf-8 -*-
+
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse,HttpResponseRedirect
 from models import project
+import datetime
 # Create your views here.
 def index(request):
-	return render(request, "gantt.html", {"canWrite":"true",})
-
+	#return render(request, "gantt.html", {"canWrite":"true",})
+	projects = project.objects.all()
+	print projects
+	return render(request, "index.html", {"projects":projects})
 
 def add_project(request):
 	if request.method == "POST":
@@ -15,12 +20,23 @@ def add_project(request):
 		'''
 		newproject = project()
 		projectname = request.POST["projectname"]
-		publicdate = request.POST["publicdata"]
+		publicdate = request.POST["publicdate"].split("-")
+		
 		author = 'admin'
+		newproject.projectname = projectname
+		newproject.pulbicdate = datetime.date(
+			int(publicdate[0]), 
+			int(publicdate[1]),
+			int(publicdate[2] ) ) 
+
+
+		newproject.author = author
+		newproject.save()
+		return HttpResponseRedirect("/")
 
 	else:
 		return HttpResponse("请求非法！")
 
-def show_project(request):
-	projects = project.objects.all()
-	return render('show_project.html', projects)
+def show_projects(request, project_name):
+
+	return HttpResponse(project_name)
