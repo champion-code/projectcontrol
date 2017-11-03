@@ -24,4 +24,6 @@ urlpatterns = [
     url(r'^$', control_views.index, name="index"),
     url(r'^projects/(?P<project_name>[^/]+)/$', control_views.show_projects, name="projects"),
     url(r'^add_project/$', control_views.add_project, name='add_project'),
+    url(r'^getprojectdata/$', control_views.get_project_data,  name='get_project_data'),
+
 ]

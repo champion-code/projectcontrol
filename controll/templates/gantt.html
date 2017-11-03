@@ -91,48 +91,63 @@ $(function() {
   //in order to force compute the best-fitting zoom level
   delete ge.gantt.zoom;
 
+  //load data form server
+  var projectname = "{{ projectname }}"
+  var callback = initGant;
+  loadGanttFromServer(projectname, callback);
 
-  var project=loadFromLocalStorage();
+
+  //load data from local
+  // var project=loadFromLocalStorage();
 
 
-  if (!project.canWrite)
-    $(".ganttButtonBar button.requireWrite").attr("disabled","true");
+  // if (!project.canWrite)
+  //   $(".ganttButtonBar button.requireWrite").attr("disabled","true");
 
-  ge.loadProject(project);
-  ge.checkpoint(); //empty the undo stack
-
-  ge.editor.element.oneTime(100, "cl", function () {$(this).find("tr.emptyRow:first").click()});
+  // ge.loadProject(project);
+  // ge.checkpoint(); //empty the undo stack
+  //ge.editor.element.oneTime(100, "cl", function () {$(this).find("tr.emptyRow:first").click()});
 });
+
+function initGant()
+{
+  ge.editor.element.oneTime(100, "cl", function () {$(this).find("tr.emptyRow:first").click()});
+}
 
 
 
 function loadGanttFromServer(taskId, callback) {
 
   //this is a simulation: load data from the local storage if you have already played with the demo or a textarea with starting demo data
-  loadFromLocalStorage();
+  //loadFromLocalStorage();
 
   //this is the real implementation
-  /*
+
   //var taskId = $("#taskSelector").val();
-  var prof = new Profiler("loadServerSide");
-  prof.reset();
+  //var prof = new Profiler("loadServerSide");
+  //prof.reset();
 
-  $.getJSON("ganttAjaxController.jsp", {CM:"LOADPROJECT",taskId:taskId}, function(response) {
-    //console.debug(response);
-    if (response.ok) {
-      prof.stop();
-
-      ge.loadProject(response.project);
+  $.getJSON("/getprojectdata/", {CM:"LOADPROJECT","taskId":taskId}, function(response) {
+    console.debug("heheh");
+    //if (response.OK) {
+      //prof.stop();
+      var ret = response
+      var offset=new Date().getTime()-ret.tasks[0].start;
+      for (var i=0;i<ret.tasks.length;i++) {
+      ret.tasks[i].start = ret.tasks[i].start + offset;
+      }
+      ge.loadProject(ret);
       ge.checkpoint(); //empty the undo stack
 
       if (typeof(callback)=="function") {
         callback(response);
       }
-    } else {
-      jsonErrorHandling(response);
-    }
+    //} else {
+      //jsonErrorHandling(response);
+    //  alert("json error!");
+    //}
   });
-  */
+
 }
 
 
@@ -299,7 +314,7 @@ function loadFromLocalStorage() {
       {"id": "tmp_2", "name": "Worker"},
       {"id": "tmp_3", "name": "Stakeholder"},
       {"id": "tmp_4", "name": "Customer"}
-    ], "canWrite":   {{ canWrite }}, "canDelete":true, "canWriteOnParent": true, "zoom": "w3"}
+    ], "canWrite": false, "canDelete":true, "canWriteOnParent": true, "zoom": "w3"}
 
 
     //actualize data
@@ -390,6 +405,10 @@ function editResources(){
 
 
 
+<div id="nav">
+ 
+
+</div>
 
 
 <div id="gantEditorTemplates" style="display:none;">
