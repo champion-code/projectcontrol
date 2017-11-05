@@ -82,7 +82,7 @@ $(function() {
   var canWrite=false; //this is the default for test purposes
 
   // here starts gantt initialization
-  ge = new GanttMaster();
+  ge = new GanttMaster("{% static "res/" %}");
   ge.set100OnClose=true;
 
   ge.init($("#workSpace"));
@@ -128,7 +128,7 @@ function loadGanttFromServer(taskId, callback) {
   //prof.reset();
 
   $.getJSON("/getprojectdata/", {CM:"LOADPROJECT","taskId":taskId}, function(response) {
-    console.debug("heheh");
+    
     //if (response.OK) {
       //prof.stop();
       var ret = response
@@ -154,16 +154,16 @@ function loadGanttFromServer(taskId, callback) {
 function saveGanttOnServer() {
 
   //this is a simulation: save data to the local storage or to the textarea
-  saveInLocalStorage();
+  //saveInLocalStorage();
 
-  /*
+  
   var prj = ge.saveProject();
 
   delete prj.resources;
   delete prj.roles;
 
-  var prof = new Profiler("saveServerSide");
-  prof.reset();
+  //var prof = new Profiler("saveServerSide");
+  //prof.reset();
 
   if (ge.deletedTaskIds.length>0) {
     if (!confirm("TASK_THAT_WILL_BE_REMOVED\n"+ge.deletedTaskIds.length)) {
@@ -171,26 +171,29 @@ function saveGanttOnServer() {
     }
   }
 
-  $.ajax("ganttAjaxController.jsp", {
-    dataType:"json",
-    data: {CM:"SVPROJECT",prj:JSON.stringify(prj)},
-    type:"POST",
+  var csrftoken = $("input[name='csrfmiddlewaretoken']")[0].value;
 
-    success: function(response) {
-      if (response.ok) {
-        prof.stop();
+  $.ajax("/saveproject/", {
+    type:"POST",
+    dataType:"json",
+    data: {"CM":"SVPROJECT","project":"{{ projectname }}","csrfmiddlewaretoken":csrftoken  ,"prj":JSON.stringify(prj)},
+    success: function(response){
+      if (response.OK) {
+        //prof.stop();
+        
         if (response.project) {
           ge.loadProject(response.project); //must reload as "tmp_" ids are now the good ones
         } else {
-          ge.reset();
+          //ge.reset();
         }
+        alert("save ok!");
       } else {
         var errMsg="Errors saving project\n";
         if (response.message) {
           errMsg=errMsg+response.message+"\n";
         }
 
-        if (response.errorMessages.length) {
+        if (response.errorMessages) {
           errMsg += response.errorMessages.join("\n");
         }
 
@@ -199,7 +202,6 @@ function saveGanttOnServer() {
     }
 
   });
-  */
 }
 
 function newProject(){
@@ -415,7 +417,7 @@ function editResources(){
 <div class="__template__" type="GANTBUTTONS"><!--
   <div class="ganttButtonBar noprint">
     <div class="buttons">
-      <a href="https://gantt.twproject.com/"><img src="{% static  "res/twGanttLogo.png" %}" alt="Twproject" align="absmiddle" style="max-width: 136px; padding-right: 15px"></a>
+      <a href="#"><img src="{% static  "res/GanttLogo.png" %}" alt="Twproject" align="absmiddle" style="max-width: 136px; padding-right: 15px"></a>
 
       <button onclick="$('#workSpace').trigger('undo.gantt');return false;" class="button textual icon requireCanWrite" title="undo"><span class="teamworkIcon">&#39;</span></button>
       <button onclick="$('#workSpace').trigger('redo.gantt');return false;" class="button textual icon requireCanWrite" title="redo"><span class="teamworkIcon">&middot;</span></button>
@@ -451,6 +453,7 @@ function editResources(){
 
     <button onclick="editResources();" class="button textual requireWrite" title="edit resources"><span class="teamworkIcon">M</span></button>
       &nbsp; &nbsp; &nbsp; &nbsp;
+    {% csrf_token %}   
     <button onclick="saveGanttOnServer();" class="button first big requireWrite" title="Save">Save</button>
     <button onclick='newProject();' class='button requireWrite newproject'><em>clear project</em></button>
     <button class="button login" title="login/enroll" onclick="loginEnroll($(this));" style="display:none;">login/enroll</button>

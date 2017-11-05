@@ -20,7 +20,7 @@
  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-function GanttMaster() {
+function GanttMaster(staticurl) {
   this.tasks = [];
   this.deletedTaskIds = [];
   this.links = [];
@@ -66,7 +66,7 @@ function GanttMaster() {
 
   this.currentTask; // task currently selected;
 
-  this.resourceUrl = "res/"; // URL to resources (images etc.)
+  this.resourceUrl = staticurl; // URL to resources (images etc.)
   this.__currentTransaction;  // a transaction object holds previous state during changes
   this.__undoStack = [];
   this.__redoStack = [];

@@ -2,29 +2,55 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title></title>
-
-
+	<title>活动进度管理系统</title>
 	<link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
 
 	<script src="http://apps.bdimg.com/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 <body>
+
 <div class="container">
-  
+<hr />
+<div class="row">
+  <div id="form" class="col-md-8 col-md-offset-2">
   <form action="/add_project/" method="post">
     {% csrf_token %}
-  	活动名称：<input type="text" name="projectname"/> <br/>
-  	活动发布日期：<input type="date" name="publicdate" /> <br/>
-  	<input type="submit" value="添加">
+  	活动名称：<input type="text" name="projectname"/>  
+  	活动发布日期：<input type="date" name="publicdate" /> 
+  	<button type="submit" class="btn btn-primary">添加</button>
   </form>
-
-  <div id="projects">
-  {% for project in projects %}
-    <a href="{{ project.get_absolute_url }}">{{ project }}</a>
-  {% endfor %}
   </div>
+</div>
+
+<hr />
+<div class="row bs-example">
+    <div class="col-md-8 col-md-offset-2 ">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>活动名称</th>
+            <th>外放时间</th>
+            <th>创建人</th>
+          </tr>            
+        </thead>
+        <tbody>
+          {% for project in projects %}
+          <tr>
+            <th scope="row">{{ project.id }}</th>
+            <td><a class="btn btn-info " href="{{ project.get_absolute_url }}">{{ project }}</a></td>
+            <td>{{ project.pulbicdate }}</td>
+            <td>{{ project.author }}</td>
+          </tr>
+          {% endfor %} 
+        </tbody>
+      </table>
+      
+    </div>
+   
+</div>
+
 
 </div>
 

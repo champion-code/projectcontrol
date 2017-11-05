@@ -61,3 +61,9 @@ def get_project_data(request):
 	projectdata = load_data(projectname)
 
 	return HttpResponse(json.dumps(projectdata), content_type="application/json")
+
+def save_project(request):
+	projectname = request.POST["project"]
+	projectdata = request.POST["prj"]
+	print projectname, projectdata
+	return HttpResponse(json.dumps({"OK":1,}), content_type="application/json")
